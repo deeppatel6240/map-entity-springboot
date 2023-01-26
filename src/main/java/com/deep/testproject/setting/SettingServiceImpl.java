@@ -79,17 +79,25 @@ public class SettingServiceImpl {
 
         Optional<Fields> fieldExist = fieldsRepo.findById(fieldId);
 
+        List<Setting> settings = settingRepo.findAll();
+
+        Optional<Setting> optionalSetting = settings.stream().filter(f -> f.getFields().forEach(fsingle -> fsingle.equals(field))).findAny();
+
         if (fieldExist.isEmpty()) {
             throw new Exception("Correlation Field not found");
         }  else {
             log.info("Correlation Field of Id: {} is exist, Updating server...", fieldId);
+
             fieldExist.get().setId(fieldId);
             fieldExist.get().setType(field.getType());
             fieldExist.get().setSourceCol(field.getSourceCol());
             fieldExist.get().setDestCol(field.getDestCol());
-            fieldExist.get().setSetting(field.getSetting());
 
-            log.info("Correlation Field updated successfully with server object: {}", fieldExist);
+            fieldExist.get().setSetting(settings.get(0));
+
+            fieldsRepo.save(fieldExist.get());
+
+            log.info("Correlation Field updated successfully with server object: {}", fieldExist.get());
         }
 
         return fieldExist.get();
