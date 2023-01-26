@@ -96,7 +96,7 @@ public class SettingController {
     }
 
     @PutMapping(value = "/update-fields", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> updateFields(@RequestBody Fields fields) {
+    public ResponseEntity<Response> updateFields(@RequestBody Fields fields, @RequestParam Long fieldId) throws Exception {
         return ResponseEntity.ok(
                 Response.builder()
                         .responseTime(LocalDateTime.now())
@@ -105,7 +105,7 @@ public class SettingController {
                         .message("Simple Search executed successfully!")
                         .method("SimpleSearchController.searchContent")
                         .executionMessage("Implemented business logic of Simple Search class method")
-                        .data(Map.of("fields", settingService.updateField(fields)))
+                        .data(Map.of("fields", settingService.updateField(fields, fieldId)))
                         .build()
         );
     }
