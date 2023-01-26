@@ -1,6 +1,5 @@
 package com.deep.testproject.setting;
 
-import com.deep.testproject.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,12 +67,26 @@ public class SettingServiceImpl {
         return fieldsRepo.findAll();
     }
 
-    public Setting updateSetting(Setting setting) {
-        return settingRepo.save(setting);
+    public Setting updateSetting(Setting setting, Long settingId) throws Exception {
+
+        Optional<Setting> settingExist = settingRepo.findById(settingId);
+
+        if (settingExist.isEmpty()) {
+            throw new Exception("Correlation Field not found");
+        }  else {
+            log.info("Correlation Field of Id: {} is exist, Updating server...", settingId);
+
+            settingExist.get().setId(settingId);
+            settingExist.get().setOffset(setting.getOffset());
+            settingExist.get().setDateFormat(setting.getDateFormat());
+            settingExist.get().setNoOfPreviousPartitionScan(setting.getNoOfPreviousPartitionScan());
+            settingRepo.save(settingExist.get());
+
+            log.info("Correlation Field updated successfully with server object: {}", settingExist.get());
+        }
+
+        return settingExist.get();
     }
-
-
-
 
     public Fields updateField(Fields field, Long fieldId) throws Exception {
 
@@ -81,7 +94,13 @@ public class SettingServiceImpl {
 
         List<Setting> settings = settingRepo.findAll();
 
-        Optional<Setting> optionalSetting = settings.stream().filter(f -> f.getFields().forEach(fsingle -> fsingle.equals(field))).findAny();
+        Setting setting1 = settings.stream()
+                .filter(setting2 -> setting2.getFields().stream()
+                .anyMatch(f -> f.getId().equals(fieldId)))
+                .findFirst()
+                .orElse(null);
+
+        log.info("stream setting is: {}", setting1);
 
         if (fieldExist.isEmpty()) {
             throw new Exception("Correlation Field not found");
@@ -92,8 +111,7 @@ public class SettingServiceImpl {
             fieldExist.get().setType(field.getType());
             fieldExist.get().setSourceCol(field.getSourceCol());
             fieldExist.get().setDestCol(field.getDestCol());
-
-            fieldExist.get().setSetting(settings.get(0));
+            fieldExist.get().setSetting(setting1);
 
             fieldsRepo.save(fieldExist.get());
 
