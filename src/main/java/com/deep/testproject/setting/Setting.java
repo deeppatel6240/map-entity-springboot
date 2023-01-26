@@ -30,6 +30,7 @@ public class Setting {
     @Column(name = "pre_partition")
     private int noOfPreviousPartitionScan;
 
-    @OneToMany(mappedBy = "setting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "setting_id")
     private List<Fields> fields;
 }
