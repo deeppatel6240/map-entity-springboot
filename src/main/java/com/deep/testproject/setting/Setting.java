@@ -21,7 +21,7 @@ public class Setting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "setting_id")
-    private int id;
+    private Long id;
 
     @Column(name = "offset")
     private String offset;
@@ -32,7 +32,6 @@ public class Setting {
     @Column(name = "pre_partition")
     private int noOfPreviousPartitionScan;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "field_id", referencedColumnName = "setting_id")
-    private List<Fields> fields = new ArrayList<>();
+    @OneToMany(mappedBy = "setting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fields> fields;
 }

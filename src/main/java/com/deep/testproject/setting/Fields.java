@@ -1,5 +1,6 @@
 package com.deep.testproject.setting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,11 +19,7 @@ public class Fields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "field_id")
-    private int id;
-
-//    @ManyToOne
-//    @JoinColumn(name = "setting_id")
-//    private Setting setting;
+    private Long id;
 
     @Column(name = "type")
     private String type;
@@ -32,4 +29,10 @@ public class Fields {
 
     @Column(name = "dest_col")
     private String destCol;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "setting_id")
+    private Setting setting;
+
 }
